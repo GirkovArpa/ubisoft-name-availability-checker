@@ -1,0 +1,24 @@
+const DEFAULT_WIDTH = 360dip;
+var (sx,sy,sw,sh) = View.screenBox(0,#workarea,#rectw);
+var w = self.toPixels(DEFAULT_WIDTH, #width);
+const DEFAULT_HEIGHT = 75dip;
+var h = self.toPixels(DEFAULT_HEIGHT, #height);
+view.move( sx + (sw - w) / 2, sy + (sh - h) / 2, w,h, true );
+
+async function checkName(name) {
+  try {
+    var [text, response] = await view.request { 
+      url: "https://r6.apitab.com/namecheck/" + name, 
+      output: #json 
+    };
+    return text.message;
+  } catch(e) {
+    return String.$( HTTP status: {e.data.status}, response length: {e.data.response.length} );
+  }
+} 
+
+$(button#check).onClick = async function() {
+  const name = $(#name).value;
+  const response = await checkName(name);
+  $(#availability).html = response;
+}
